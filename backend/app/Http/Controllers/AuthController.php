@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
+use App\User;
+use Illuminate\Http\Request;
+
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
@@ -14,7 +18,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login','signup']]);
     }
 
     /**
@@ -22,8 +26,40 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login()
+    public function login(Request $request)
     {
+        // $request->password = bcrypt($request->password);
+        $credentials = request(['email', 'password']);
+
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json(['error' => 'User Does Not Exist'], 401);
+        }
+
+        return $this->respondWithToken($token);
+    }
+
+
+    /**
+     *  sign up and Get a JWT via given credentials.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function signup(Request $request)
+    {
+
+        $validator=Validator::make($request->all(), [
+            'name' => 'required',
+            'email'=>'required|unique:users',
+
+            'password'=> 'required|confirmed'
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->messages()],401);
+        }
+        $input=$request->all();
+        $input['password']=bcrypt($input['password']);
+
+        $user= User::create($input);
         $credentials = request(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
