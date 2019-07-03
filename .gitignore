@@ -1,0 +1,58 @@
+backend/node_modules
+backend/public/hot
+backend/public/storage
+backend/storage/*.key
+backend/vendor
+backend/.idea
+backend/.vscode
+backend/.vagrant
+backend/Homestead.json
+backend/Homestead.yaml
+backend/npm-debug.log
+backend/yarn-error.log
+backend/.env
+backend/.phpunit.result.cache
+backend/package-lock.json
+
+
+
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+frontend/dist
+frontend/tmp
+frontend/out-tsc
+
+# dependencies
+frontend/node_modules
+
+# IDEs and editors
+frontend/.idea
+frontend/.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# misc
+frontend/.sass-cache
+frontend/connect.lock
+frontend/coverage
+frontend/libpeerconnection.log
+frontend/npm-debug.log
+frontend/yarn-error.log
+frontend/testem.log
+frontend/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+
