@@ -24,6 +24,11 @@ Route::group([
     Route::post('signup', 'AuthController@signup');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
+    Route::get('me', 'AuthController@me');
+    Route::post('passwordreset','passwordResetController@sendEmail');
+    Route::post('passwordreset-response','authController@changePassword');
+
+    // stikcy
+    Route::resource('sticky', 'stickyController')->except(['create','show','edit']);
 
 });

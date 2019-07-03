@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -18,7 +19,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login','signup']]);
+        $this->middleware('auth:api', ['except' => ['login','signup','changePassword']]);
     }
 
     /**
@@ -63,11 +64,66 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'User Does Not Exist'], 401);
+            return response()->json(['error' => ['error'=>'User Does Not Exist']], 401);
         }
 
         return $this->respondWithToken($token);
     }
+
+
+
+    /**
+     *  sign up and Get a JWT via given credentials.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function changePassword(Request $request)
+    {
+
+        $validator=Validator::make($request->all(), [
+
+            'email'=>'required',
+            'resetToken'=>'required',
+            'password'=> 'required|confirmed'
+        ]);
+
+
+        if ($validator->fails()) {
+            return response()->json(['error'=>$validator->messages()],401);
+        }
+
+        $email=$request->email;
+        $resetToken=$request->resetToken;
+        $resetcheck=DB::table('password_resets')->where('email',$email)->where('token',$resetToken)->first();
+        if ($resetcheck) {
+            $user=User::where('email',$email)->first();
+            if ($user) {
+        $input=$request->all();
+        $input['password']=bcrypt($input['password']);
+
+        $user->password=$input['password'];
+        $user->save();
+        DB::table('password_resets')->where('email',$email)->where('token',$resetToken)->delete();
+        // $credentials = request(['email', 'password']);
+
+        // if (!$token = auth()->attempt($credentials)) {
+        //     return response()->json(['error' =>  ['error'=>'User Does Not Exist']], 401);
+        // }
+
+        // return $this->respondWithToken($token);
+        return response()->json(['success' =>  'Password changed succefully'], 200);
+            }else{
+                return response()->json(['error' =>  ['error'=>'User Does Not Exist']], 401);
+            }
+        }else{
+            return response()->json(['error' =>  ['error'=>'Invalid TOken or Email']], 401);
+        }
+
+
+
+
+    }
+
 
     /**
      * Get the authenticated User.
@@ -77,6 +133,7 @@ class AuthController extends Controller
     public function me()
     {
         return response()->json(auth()->user());
+        //return auth()->user();
     }
 
     /**
@@ -117,4 +174,8 @@ class AuthController extends Controller
             'user' => auth()->user()->name,
         ]);
     }
+
+
+
+
 }

@@ -50,4 +50,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    public function stickies()
+    {
+        return $this->hasMany('App\sticky', 'user_id');
+    }
 }
