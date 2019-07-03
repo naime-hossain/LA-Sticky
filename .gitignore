@@ -11,6 +11,7 @@ backend/Homestead.yaml
 backend/npm-debug.log
 backend/yarn-error.log
 backend/.env
+backend/yarn.lock
 backend/.phpunit.result.cache
 backend/package-lock.json
 
